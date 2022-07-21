@@ -2,6 +2,7 @@ class Warrior:
     def __init__(self):
         self.health = 50
         self.attack = 5
+        self.defense = 0
 
     @property
     def is_alive(self):
@@ -12,6 +13,14 @@ class Knight(Warrior):
     def __init__(self):
         super().__init__()
         self.attack = 7
+
+
+class Defender(Warrior):
+    def __init__(self):
+        super().__init__()
+        self.health = 60
+        self.attack = 3
+        self.defense = 2
 
 
 class Army:
@@ -44,7 +53,7 @@ class Battle:
 
 
 def fight(fighter1, fighter2):
-    fighter2.health -= fighter1.attack
+    fighter2.health -= (fighter1.attack - fighter2.defense) * (fighter1.attack > fighter2.defense)
     if fighter2.is_alive:
         fight(fighter2, fighter1)
     return fighter1.is_alive
@@ -57,6 +66,10 @@ if __name__ == '__main__':
     carl = Knight()
     dave = Warrior()
     mark = Warrior()
+    bob = Defender()
+    mike = Knight()
+    rog = Warrior()
+    lancelot = Defender()
 
     assert fight(chuck, bruce) == True
     assert fight(dave, carl) == False
@@ -66,22 +79,24 @@ if __name__ == '__main__':
     assert dave.is_alive == False
     assert fight(carl, mark) == False
     assert carl.is_alive == False
+    assert fight(bob, mike) == False
+    assert fight(lancelot, rog) == True
 
     # battle tests
     my_army = Army()
-    my_army.add_units(Knight, 3)
+    my_army.add_units(Defender, 1)
 
     enemy_army = Army()
-    enemy_army.add_units(Warrior, 3)
+    enemy_army.add_units(Warrior, 2)
 
     army_3 = Army()
-    army_3.add_units(Warrior, 20)
-    army_3.add_units(Knight, 5)
+    army_3.add_units(Warrior, 1)
+    army_3.add_units(Defender, 1)
 
     army_4 = Army()
-    army_4.add_units(Warrior, 30)
+    army_4.add_units(Warrior, 2)
 
     battle = Battle()
 
-    assert battle.fight(my_army, enemy_army) == True
-    assert battle.fight(army_3, army_4) == False
+    assert battle.fight(my_army, enemy_army) == False
+    assert battle.fight(army_3, army_4) == True
