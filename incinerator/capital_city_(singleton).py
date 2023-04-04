@@ -1,12 +1,16 @@
-class Capital(object):
+class Capital:
     def __new__(cls, city_name):
         if not hasattr(cls, 'instance'):
-            cls.instance = super(Capital, cls).__new__(cls)
+            cls.instance = super().__new__(cls)
             cls.instance.city_name = city_name
         return cls.instance
 
     def name(self):
         return self.city_name
+
+    @classmethod
+    def destroy(cls):
+        del cls.instance
 
 
 if __name__ == '__main__':
@@ -22,4 +26,9 @@ if __name__ == '__main__':
     assert ukraine_capital_2 is ukraine_capital_1
     assert ukraine_capital_3 is ukraine_capital_1
 
-    print("Coding complete? Let's try tests!")
+    Capital.destroy()
+
+    ukraine_capital_3 = Capital("Marocco")
+    ukraine_capital_2 = Capital("London")
+    assert ukraine_capital_3.name() == "Marocco"
+    assert ukraine_capital_2.name() == "Marocco"
